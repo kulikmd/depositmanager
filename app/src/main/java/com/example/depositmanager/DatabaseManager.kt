@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/depositmanager/dbconnector/DatabaseManager.kt
 package com.example.depositmanager
 
 import android.content.ContentValues
@@ -24,11 +23,11 @@ class DatabaseManager(context: Context) {
     }
 
     fun updateDeposit(id: Long, values: ContentValues): Int {
-        return db.update(DatabaseHelper.TABLE_DEPOSITS, values, "id = ?", arrayOf(id.toString()))
+        return db.update(DatabaseHelper.TABLE_DEPOSITS, values, "_id = ?", arrayOf(id.toString()))
     }
 
     fun deleteDeposit(id: Long): Int {
-        return db.delete(DatabaseHelper.TABLE_DEPOSITS, "id = ?", arrayOf(id.toString()))
+        return db.delete(DatabaseHelper.TABLE_DEPOSITS, "_id = ?", arrayOf(id.toString()))
     }
 
     fun getAllDeposits(): Cursor {

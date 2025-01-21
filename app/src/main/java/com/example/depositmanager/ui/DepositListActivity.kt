@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/depositmanager/ui/DepositListActivity.kt
 package com.example.depositmanager.ui
 
 import android.content.Intent
@@ -16,6 +15,7 @@ class DepositListActivity : AppCompatActivity() {
     private lateinit var addButton: Button
     private lateinit var deleteButton: Button
     private lateinit var editButton: Button
+    private lateinit var depositAdapter: DepositAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,13 @@ class DepositListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Обновите список депозитов
+        updateDepositList()
+    }
+
+    private fun updateDepositList() {
+        val cursor = dbManager.getAllDeposits()
+        depositAdapter = DepositAdapter(this, cursor)
+        depositListView.adapter = depositAdapter
     }
 
     override fun onDestroy() {

@@ -1,30 +1,33 @@
-// app/src/main/java/com/example/depositmanager/dbconnector/DatabaseHelper.kt
 package com.example.depositmanager
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "deposits.db"
         private const val DATABASE_VERSION = 1
-        val TABLE_DEPOSITS = "deposits"
+        const val TABLE_DEPOSITS = "deposits"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
+        Log.d("DatabaseHelper", "Creating table $TABLE_DEPOSITS")
         createDepositsTable(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        Log.d("DatabaseHelper", "Upgrading database from version $oldVersion to $newVersion")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_DEPOSITS")
         onCreate(db)
     }
 
     private fun createDepositsTable(db: SQLiteDatabase) {
         val CREATE_DEPOSITS_TABLE = ("CREATE TABLE $TABLE_DEPOSITS ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "id INTEGER,"
                 + "bank_name TEXT,"
                 + "amount REAL,"
                 + "interest_rate REAL,"
@@ -44,5 +47,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 + "reserved9 TEXT,"
                 + "reserved10 TEXT)")
         db.execSQL(CREATE_DEPOSITS_TABLE)
+        Log.d("DatabaseHelper", "Table $TABLE_DEPOSITS created successfully")
     }
 }
