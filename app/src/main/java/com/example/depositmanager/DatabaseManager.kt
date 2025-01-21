@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 
 class DatabaseManager(context: Context) {
 
@@ -35,6 +36,7 @@ class DatabaseManager(context: Context) {
     }
 
     fun getDepositById(id: Long): Cursor {
-        return db.query(DatabaseHelper.TABLE_DEPOSITS, null, "id = ?", arrayOf(id.toString()), null, null, null)
+        Log.d("DatabaseManager", "Fetching deposit with id: $id")
+        return db.query(DatabaseHelper.TABLE_DEPOSITS, null, "_id = ?", arrayOf(id.toString()), null, null, null)
     }
 }

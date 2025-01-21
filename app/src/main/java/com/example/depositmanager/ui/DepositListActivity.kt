@@ -2,6 +2,7 @@ package com.example.depositmanager.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,24 @@ class DepositListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Добавьте обработчики для deleteButton и editButton
+        deleteButton.setOnClickListener {
+            val selectedItems = depositAdapter.getSelectedItems()
+            for (id in selectedItems) {
+                dbManager.deleteDeposit(id)
+            }
+            updateDepositList()
+        }
+
+        editButton.setOnClickListener {
+            val selectedItems = depositAdapter.getSelectedItems()
+            if (selectedItems.size == 1) {
+                val id = selectedItems.first()
+                val intent = Intent(this, DepositEditActivity::class.java)
+                intent.putExtra("deposit_id", id)
+                Log.d("DepositListActivity", "Editing deposit with id: $id")
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onResume() {

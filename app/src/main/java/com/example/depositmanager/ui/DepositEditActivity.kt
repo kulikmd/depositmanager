@@ -24,6 +24,8 @@ class DepositEditActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var cancelButton: Button
 
+    private var depositId: Long = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_deposit_edit)
@@ -42,6 +44,13 @@ class DepositEditActivity : AppCompatActivity() {
         saveButton = findViewById(R.id.saveButton)
         cancelButton = findViewById(R.id.cancelButton)
 
+        depositId = intent.getLongExtra("deposit_id", -1)
+        Log.d("DepositEditActivity", "Received deposit_id: $depositId")
+
+        if (depositId != -1L) {
+            loadDepositData(depositId)
+        }
+
         saveButton.setOnClickListener {
             saveDeposit()
         }
@@ -51,31 +60,34 @@ class DepositEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveDeposit() {
-        Log.d("DepositEditActivity", "saveDeposit called")
+    private fun loadDepositData(id: Long) {
+        val cursor = dbManager.getDepositById(id)
+        if (cursor.moveToFirst()) {
+            Log.d("DepositEditActivity", "Loading deposit data for id: $id")
+            bankNameEditText.setText(cursor.getString(cursor.getColumnIndexOrThrow("bank_name")))
+            amountEditText.setText(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")).toString())
+            interestRateEditText.setText(cursor.getDouble(cursor.getColumnIndexOrThrow("interest_rate")).toString())
+            startDateEditText.setText(cursor.getString(cursor.getColumnIndexOrThrow("start_date")))
+            endDateEditText.setText(cursor.getString(cursor.getColumnIndexOrThrow("end_date")))
+            capitalizationFlagCheckBox.isChecked = cursor.getInt(cursor.getColumnIndexOrThrow("capitalization_flag")) == 1
+            endOfTermFlagCheckBox.isChecked = cursor.getInt(cursor.getColumnIndexOrThrow("end_of_term_flag")) == 1
+            interestPaymentDayEditText.setText(cursor.getInt(cursor.getColumnIndexOrThrow("interest_payment_day")).toString())
+            Log.d("DepositEditActivity", "Loaded deposit data successfully for id: $id")
+        } else {
+            Log.e("DepositEditActivity", "Failed to load deposit data for id: $id")
+        }
+        cursor.close()
+    }
 
+    private fun saveDeposit() {
         val bankName = bankNameEditText.text.toString()
-        val amount = amountEditText.text.toString().toDoubleOrNull()
-        val interestRate = interestRateEditText.text.toString().toDoubleOrNull()
+        val amount = amountEditText.text.toString().toDoubleOrNull() ?: 0.0
+        val interestRate = interestRateEditText.text.toString().toDoubleOrNull() ?: 0.0
         val startDate = startDateEditText.text.toString()
         val endDate = endDateEditText.text.toString()
         val capitalizationFlag = if (capitalizationFlagCheckBox.isChecked) 1 else 0
         val endOfTermFlag = if (endOfTermFlagCheckBox.isChecked) 1 else 0
-        val interestPaymentDay = interestPaymentDayEditText.text.toString().toIntOrNull()
-
-        if (amount == null || interestRate == null || interestPaymentDay == null) {
-            Log.e("DepositEditActivity", "Invalid input data")
-            return
-        }
-
-        Log.d("DepositEditActivity", "Bank Name: $bankName")
-        Log.d("DepositEditActivity", "Amount: $amount")
-        Log.d("DepositEditActivity", "Interest Rate: $interestRate")
-        Log.d("DepositEditActivity", "Start Date: $startDate")
-        Log.d("DepositEditActivity", "End Date: $endDate")
-        Log.d("DepositEditActivity", "Capitalization Flag: $capitalizationFlag")
-        Log.d("DepositEditActivity", "End of Term Flag: $endOfTermFlag")
-        Log.d("DepositEditActivity", "Interest Payment Day: $interestPaymentDay")
+        val interestPaymentDay = interestPaymentDayEditText.text.toString().toIntOrNull() ?: 0
 
         val values = ContentValues().apply {
             put("bank_name", bankName)
@@ -86,11 +98,13 @@ class DepositEditActivity : AppCompatActivity() {
             put("capitalization_flag", capitalizationFlag)
             put("end_of_term_flag", endOfTermFlag)
             put("interest_payment_day", interestPaymentDay)
-            // Добавьте значения для reserved1, reserved2 и т.д. по аналогии
         }
 
-        val result = dbManager.insertDeposit(values)
-        Log.d("DepositEditActivity", "Insert result: $result")
+        if (depositId == -1L) {
+            dbManager.insertDeposit(values)
+        } else {
+            dbManager.updateDeposit(depositId, values)
+        }
 
         finish()
     }
