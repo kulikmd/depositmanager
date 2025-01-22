@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.depositmanager.R
 import com.example.depositmanager.DatabaseManager
@@ -36,11 +37,7 @@ class DepositListActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener {
-            val selectedItems = depositAdapter.getSelectedItems()
-            for (id in selectedItems) {
-                dbManager.deleteDeposit(id)
-            }
-            updateDepositList()
+            showDeleteConfirmationDialog()
         }
 
         menuButton.setOnClickListener {
@@ -67,6 +64,23 @@ class DepositListActivity : AppCompatActivity() {
     private fun updateDepositList() {
         val cursor = dbManager.getAllDeposits()
         depositAdapter.changeCursor(cursor)
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirm Deletion")
+        builder.setMessage("Are you sure you want to delete the selected items?")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            val selectedItems = depositAdapter.getSelectedItems()
+            for (id in selectedItems) {
+                dbManager.deleteDeposit(id)
+            }
+            updateDepositList()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     override fun onDestroy() {
