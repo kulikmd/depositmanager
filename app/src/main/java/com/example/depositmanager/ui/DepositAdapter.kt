@@ -10,7 +10,7 @@ import android.widget.CursorAdapter
 import android.widget.TextView
 import com.example.depositmanager.R
 
-class DepositAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
+class DepositAdapter(context: Context, cursor: Cursor?, private val onItemClickListener: (Long) -> Unit) : CursorAdapter(context, cursor, 0) {
 
     private val selectedItems = mutableSetOf<Long>()
 
@@ -40,6 +40,10 @@ class DepositAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, 
             } else {
                 selectedItems.remove(id)
             }
+        }
+
+        view.setOnClickListener {
+            onItemClickListener(id)
         }
     }
 

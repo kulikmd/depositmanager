@@ -39,4 +39,8 @@ class DatabaseManager(context: Context) {
         Log.d("DatabaseManager", "Fetching deposit with id: $id")
         return db.query(DatabaseHelper.TABLE_DEPOSITS, null, "_id = ?", arrayOf(id.toString()), null, null, null)
     }
+
+    fun getDatabasePath(): String {
+        return dbHelper.readableDatabase.path
+    }
 }

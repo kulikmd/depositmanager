@@ -1,5 +1,6 @@
 package com.example.depositmanager.ui
 
+import android.app.DatePickerDialog
 import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.depositmanager.R
 import com.example.depositmanager.DatabaseManager
+import java.util.Calendar
 
 class DepositEditActivity : AppCompatActivity() {
 
@@ -51,6 +53,14 @@ class DepositEditActivity : AppCompatActivity() {
             loadDepositData(depositId)
         }
 
+        startDateEditText.setOnClickListener {
+            showDatePickerDialog(startDateEditText)
+        }
+
+        endDateEditText.setOnClickListener {
+            showDatePickerDialog(endDateEditText)
+        }
+
         saveButton.setOnClickListener {
             saveDeposit()
         }
@@ -77,6 +87,20 @@ class DepositEditActivity : AppCompatActivity() {
             Log.e("DepositEditActivity", "Failed to load deposit data for id: $id")
         }
         cursor.close()
+    }
+
+    private fun showDatePickerDialog(editText: EditText) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = String.format("%02d.%02d.%04d", selectedDay, selectedMonth + 1, selectedYear)
+            editText.setText(selectedDate)
+        }, year, month, day)
+
+        datePickerDialog.show()
     }
 
     private fun saveDeposit() {

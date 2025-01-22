@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -45,6 +46,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Start Date"
+            android:focusable="false"
+            android:clickable="true"
             app:layout_constraintTop_toBottomOf="@id/interestRateEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +58,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="End Date"
+            android:focusable="false"
+            android:clickable="true"
             app:layout_constraintTop_toBottomOf="@id/startDateEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -90,8 +95,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5" />
 
-        <!-- Добавьте поля для reserved1, reserved2 и т.д. по аналогии -->
-
         <Button
             android:id="@+id/saveButton"
             android:layout_width="0dp"
@@ -111,6 +114,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

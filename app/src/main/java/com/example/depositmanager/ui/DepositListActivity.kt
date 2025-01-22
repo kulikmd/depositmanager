@@ -15,7 +15,7 @@ class DepositListActivity : AppCompatActivity() {
     private lateinit var depositListView: ListView
     private lateinit var addButton: Button
     private lateinit var deleteButton: Button
-    private lateinit var editButton: Button
+    private lateinit var menuButton: Button
     private lateinit var depositAdapter: DepositAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class DepositListActivity : AppCompatActivity() {
         depositListView = findViewById(R.id.depositListView)
         addButton = findViewById(R.id.addButton)
         deleteButton = findViewById(R.id.deleteButton)
-        editButton = findViewById(R.id.editButton)
+        menuButton = findViewById(R.id.menuButton)
 
         addButton.setOnClickListener {
             val intent = Intent(this, DepositEditActivity::class.java)
@@ -43,16 +43,20 @@ class DepositListActivity : AppCompatActivity() {
             updateDepositList()
         }
 
-        editButton.setOnClickListener {
-            val selectedItems = depositAdapter.getSelectedItems()
-            if (selectedItems.size == 1) {
-                val id = selectedItems.first()
-                val intent = Intent(this, DepositEditActivity::class.java)
-                intent.putExtra("deposit_id", id)
-                Log.d("DepositListActivity", "Editing deposit with id: $id")
-                startActivity(intent)
-            }
+        menuButton.setOnClickListener {
+            val intent = Intent(this, MenuActivity::class.java)
+            startActivity(intent)
         }
+
+        depositAdapter = DepositAdapter(this, null) { id ->
+            val intent = Intent(this, DepositEditActivity::class.java)
+            intent.putExtra("deposit_id", id)
+            Log.d("DepositListActivity", "Editing deposit with id: $id")
+            startActivity(intent)
+        }
+        depositListView.adapter = depositAdapter
+
+        updateDepositList()
     }
 
     override fun onResume() {
@@ -62,8 +66,7 @@ class DepositListActivity : AppCompatActivity() {
 
     private fun updateDepositList() {
         val cursor = dbManager.getAllDeposits()
-        depositAdapter = DepositAdapter(this, cursor)
-        depositListView.adapter = depositAdapter
+        depositAdapter.changeCursor(cursor)
     }
 
     override fun onDestroy() {
